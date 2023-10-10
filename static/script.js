@@ -1,3 +1,5 @@
+let rwChartInstance = null;
+
 function getData() {
     const uid = document.getElementById('uid').value;
     fetch('/get_data', {
@@ -5,26 +7,32 @@ function getData() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({uid: uid})
+        body: JSON.stringify({ uid: uid })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            alert(data.error);
-        } else {
-            document.getElementById('text').innerText = data.data;
-            const parsedData = JSON.parse(data.data);
-            createChart(parsedData);
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                document.getElementById('text').innerText = JSON.parse(data.data).date;
+                const parsedData = JSON.parse(data.data);
+                createChart(parsedData);
+            }
+        });
 }
 
-function createChart(data) {
+    function createChart(data) {
     const ctx = document.getElementById('rwChart').getContext('2d');
-    new Chart(ctx, {
+
+    // Уничтожаем предыдущий график, если он существует
+    if (rwChartInstance) {
+        rwChartInstance.destroy();
+    }
+
+    rwChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({length: data.RW.length}, (_, i) => i + 1),
+            labels: Array.from({ length: data.RW.length }, (_, i) => i + 1),
             datasets: [{
                 label: 'RW Data',
                 data: data.RW,
