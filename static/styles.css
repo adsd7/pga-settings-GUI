@@ -1,0 +1,29 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content-wrapper {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 80% 20%;
+  }
+
+#Chart {
+    /* flex-basis: 80%;
+    max-width: 80%; */
+    margin: 20px 0;
+}
+
+#pgData {
+    text-align: left;
+    padding-left: 20px;
+    padding-top: 10%;
+    /* flex-basis: 20%; 
+    overflow-y: auto; */
+}
+
