@@ -1,3 +1,10 @@
+"""
+Web interface for configuring "SL20" ultrasonic level meters based on PGA460.
+
+This module provides a Flask-based web application that allows users to interact with 
+and configure "SL20" ultrasonic level meters.
+"""
+
 import json
 import time
 from flask import Flask, render_template, request, jsonify
@@ -10,11 +17,26 @@ data_storage = {}
 
 
 def on_connect(client, userdata, _, rc):
+    """
+    Callback function for when the client successfully connects to the MQTT broker.
+
+    Args:
+    - client: The client instance for this callback.
+    - userdata: Private user data as set in Client() or userdata_set().
+    - rc: Connection result.
+    """
     print("Connected with result code "+str(rc))
     client.subscribe(f"HyCh/raw_shots/{userdata}")
 
 
 def on_message(_, userdata, msg):
+    """
+    Callback function for when a message is received from the subscribed topic.
+
+    Args:
+    - userdata: Private user data as set in Client() or userdata_set().
+    - msg: An instance of MQTTMessage. This is a class with members topic, payload, qos, retain.
+    """
     handler = MQTTMessageHandler(msg)
     handler.process_message()
 
@@ -31,11 +53,18 @@ def on_message(_, userdata, msg):
 
 @app.route('/')
 def index():
+    """Render the main page of the web application."""
     return render_template('index.html')
 
 
 @app.route('/get_data', methods=['POST'])
 def get_data():
+    """
+    Endpoint to fetch processed MQTT data based on a provided UID.
+
+    Returns:
+    - JSON response containing the processed data or an error message.
+    """
     uid = request.json.get('uid')
     if not uid:
         return jsonify({'error': 'UID is empty'})
