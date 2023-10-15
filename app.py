@@ -41,9 +41,11 @@ def on_message(_, userdata, msg):
     handler.process_message()
 
     data = {
-        "PG": handler.pg,
+        "PG": handler.pg_registers,
         "RW_X": handler.rw_x,
         "RW_Y": handler.rw_y,
+        "PG_X": handler.pg_x,
+        "PG_Y": handler.pg_y,
         "date": handler.date
     }
 

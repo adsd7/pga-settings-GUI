@@ -27,37 +27,51 @@ function getData() {
             }
 
             // Обновление графика
-            createChart(parsedData);
+            updateChart(parsedData);
         }
     });
 }
 
-
-function createChart(data) {
-    const ctx = document.getElementById('rwChart').getContext('2d');
-    
-    if (rwChartInstance) {
-        rwChartInstance.destroy();
+function updateChart(data) {
+    if (window.myChart) {
+        window.myChart.destroy();
     }
 
-    rwChartInstance = new Chart(ctx, {
+    const ctx = document.getElementById('rwChart').getContext('2d');
+    window.myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.RW_X,
-            datasets: [{
-                label: 'RW Data',
-                data: data.RW_Y,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false
-            }]
+            labels: [...new Set([...data.RW_X, ...data.PG_X])].sort((a, b) => a - b),
+            datasets: [
+                {
+                    label: 'RW Data',
+                    data: data.RW_X.map((x, i) => ({x: x, y: data.RW_Y[i]})),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    yAxisID: 'y-axis-1'  // Используем первую ось Y для RW Data
+                },
+                {
+                    label: 'PG Data',
+                    data: data.PG_X.map((x, i) => ({x: x, y: data.PG_Y[i]})),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    yAxisID: 'y-axis-2'  // Используем вторую ось Y для PG Data
+                }
+            ]
         },
         options: {
             scales: {
-                x: {
-                    beginAtZero: true
+                x: { beginAtZero: true },
+                'y-axis-1': {
+                    beginAtZero: true,
+                    position: 'left'
                 },
-                y: {
-                    beginAtZero: true
+                'y-axis-2': {
+                    min: 30,
+                    max: 90,
+                    position: 'right'
                 }
             }
         }
